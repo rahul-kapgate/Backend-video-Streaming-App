@@ -1,11 +1,11 @@
-import { ApiError } from "../utils/ApiError";
-import { asyncHandler } from "../utils/asyncHandler";
+import { ApiError } from "../utils/ApiError.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 import jwt from "jsonwebtoken"
 import { User } from '../models/user.model.js'
-import { ApiResponse } from "../utils/ApiResponse";
 
 
-export const verifyJWT = asyncHandler(async (req,res,next) => {
+
+export const verifyJWT = asyncHandler(async (req,_,next) => {
 
     try {
 
@@ -20,12 +20,16 @@ export const verifyJWT = asyncHandler(async (req,res,next) => {
         );
     
         //TODO: disscuss about Frontend 
-        if(!user )  throw new ApiResponse(401, "Invalid Acces token")
+       if (!user) {
+        //  console.log("User not found using cookies");
+         throw new ApiError(401, "Invalid Access token");
+       }
     
-        req.user;
+        req.user = user;   //debugged
         next()
 
     } catch (error) {
+        // console.log("User not found using cookies");
         throw new ApiError(401, error?.message || "Invalid access token catch ")
     }    
 })
